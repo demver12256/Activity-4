@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>modal test</title>
+<style>
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);}
+#modalContent{background:#fff;margin:100px auto;padding:20px;width:200px;}
+body.shake{animation:shake .3s;}
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+50%{transform:translateX(10px);}
+75%{transform:translateX(-10px);}
+100%{transform:translateX(0);}
+}
+#otherGenderDiv {
+  display: none;
+  margin-top: 5px;
+}
+</style>
+</head>
+<body>
+    <h1>Ctrl + Alt + N to pop up</h1>
+
+<div id="modal">
+ <div id="modalContent">
+  <h3>Enter Info</h3>
+  Name:<br>
+  <input id="name"><br><br>
+  Age:<br>
+  <input id="age" type="number"><br><br>
+  Gender:<br>
+  <select id="gender">
+    <option value="">Select</option>
+    <option>Male</option>
+    <option>Female</option>
+    <option>Other</option>
+  </select><br>
+  <div id="otherGenderDiv">
+    Specify Gender:<br>
+    <input id="otherGender" type="text" placeholder="Enter gender">
+  </div>
+  <br>
+  <button id="saveBtn">ok save</button>
+ </div>
+</div>
+
+<div id="output"></div>
+
+<script>
+const modal=document.getElementById("modal")
+const saveBtn=document.getElementById("saveBtn")
+const out=document.getElementById("output")
+const gender=document.getElementById("gender")
+const otherGenderDiv=document.getElementById("otherGenderDiv")
+const otherGenderInput=document.getElementById("otherGender")
+
+document.addEventListener("keydown",function(e){
+ if(e.ctrlKey && e.altKey && e.key==="n"){
+   modal.style.display="block"
+ }
+})
+
+gender.addEventListener("change",function(){
+  if(gender.value==="Other"){
+    otherGenderDiv.style.display="block"
+    otherGenderInput.required = true
+  }else{
+    otherGenderDiv.style.display="none"
+    otherGenderInput.value = ""
+    otherGenderInput.required = false
+  }
+})
+
+saveBtn.onclick=function(){
+ const n=document.getElementById("name").value
+ const a=document.getElementById("age").value
+ let g=gender.value
+ if(g==="Other"){
+   g=otherGenderInput.value.trim() ? otherGenderInput.value.trim() : "Other"
+ }
+ if(n=="" || a=="" || gender.value=="" || (gender.value==="Other" && otherGenderInput.value.trim()=="")){
+   document.body.classList.add("shake")
+   setTimeout(function(){document.body.classList.remove("shake")},300)
+   return;
+ }else{
+   const d={name:n,age:a,gender:g}
+   localStorage.setItem("userData",JSON.stringify(d))
+   modal.style.display="none"
+   out.innerHTML="Name:"+n+"<br>Age:"+a+"<br>Gender:"+g
+   alert("ok saved!!")
+ }
+}
+
+const save=localStorage.getItem("userData")
+if(save){
+ const d2=JSON.parse(save)
+ out.innerHTML="Name:"+d2.name+"<br>Age:"+d2.age+"<br>Gender:"+d2.gender
+}
+</script>
